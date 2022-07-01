@@ -1,0 +1,33 @@
+{
+  "name": "@gauravtrivedi/sf-bulkapi",
+  "version": "1.0.4",
+  "description": "Bulk API 2.0",
+  "main": "./src/bulkapi.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "sf-bulkapi": "./src/bulkapi.js"
+  },
+  "keywords": [
+    "salesforce",
+    "sfdx",
+    "javascript",
+    "js",
+    "sfdc",
+    "bulkAPI",
+    "bulkapi",
+    "bulk-API",
+    "bulkAPI2.0",
+    "dataload",
+    "data-load"
+  ],
+  "author": "gauravtrivedi",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^9.3.0",
+    "node-fetch": "^3.2.6",
+    "npm": "^8.12.2"
+  }
+}
