@@ -1,6 +1,6 @@
 {
   "name": "@gauravtrivedi/sf-bulkapi",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Bulk API 2.0",
   "main": "./src/bulkapi.js",
   "type": "module",
@@ -23,6 +23,9 @@
     "dataload",
     "data-load"
   ],
+  "bugs": "https://github.com/Gaurav-Trivedi/bulkapi/issues",
+  "homepage": "https://github.com/Gaurav-Trivedi/bulkapi",
+  "repository": "Gaurav-Trivedi/bulkapi",
   "author": "gauravtrivedi",
   "license": "ISC",
   "dependencies": {

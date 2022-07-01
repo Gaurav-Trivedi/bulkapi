@@ -5,7 +5,7 @@ const program = new Command();
 program
     .name('sf-bulkapi')
     .description('Connect to SFDC and perform Bulk API operations')
-    .version('1.0.4')
+    .version('1.0.5')
     .usage('-q "SELECT Id, LastName, CustomField__c FROM Contact"')
     .option('-p, --production', 'production')
     .option('-u, --user-name <value>', 'salesforce instance user name or alias, if already defined, the Salesforce instance')
