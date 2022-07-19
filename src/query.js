@@ -29,7 +29,7 @@ async function getQueryJobStatus(queryJobId, fileName) {
         fs.mkdirSync(rootPath, { recursive: true });
     }
     let jobStatus = await fetchRequest(uri, '', 'GET', 'JSON');
-    console.log(`Query job (${queryJobId}) status for ${fileName} is ${jobStatus.state}`);
+    process.stdout.write(`\rQuery job (${queryJobId}) with status for ${fileName} is ${jobStatus.state}`);
     const jobStates = ['JobComplete', 'Aborted', 'Failed'];
     if (jobStatus && jobStatus.state && !jobStates.includes(jobStatus.state)) {
         getQueryJobStatus(queryJobId, fileName);
@@ -43,6 +43,7 @@ async function getQueryResult(queryJobId, fileName) {
     const queryResult = await fetchRequest(uri, { 'Accept': 'test/csv' }, 'GET', 'TEXT');
     const filePath = `${rootPath}${fileName}.csv`;
     fs.writeFileSync(filePath, queryResult);
+    console.log('\nProcess completed');
 }
 
 
@@ -57,7 +58,7 @@ async function getAllFields() {
         ${allFields[0].message}
         `);
         process.exit();
-    } else if (allFields){
+    } else if (allFields) {
         allFields.fields.sort((a, b) => a.name > b.name ? 1 : -1).forEach(field => {
             if (field.name !== 'Id') {
                 fields.push(field.name);

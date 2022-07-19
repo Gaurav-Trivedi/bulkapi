@@ -27,7 +27,8 @@ function initiateProcess() {
     }
     os.execCommand(command, function (shellResponse) {
         const loginResult = JSON.parse(shellResponse).result;
-        options.bulkApiBaseUrl = `${loginResult.instanceUrl}/services/data/v54.0/`;
+        options.apiVersion = options.apiVersion.includes('.0') && options.apiVersion.includes('v') ? options.apiVersion : (!options.apiVersion.includes('.0') && !options.apiVersion.includes('v') ? `v${options.apiVersion}.0` : !options.apiVersion.includes('v') && options.apiVersion.includes('.0') ? `v${options.apiVersion}` : !options.apiVersion.includes('v') && options.apiVersion.includes('.0') ? `${options.apiVersion}.0` : options.apiVersion);
+        options.bulkApiBaseUrl = `${loginResult.instanceUrl}/services/data/${options.apiVersion}/`;
         options.instanceName = loginResult.instanceUrl.substring(
             loginResult.instanceUrl.indexOf("/") + 1,
             loginResult.instanceUrl.indexOf(".")

@@ -51,7 +51,7 @@ async function closeJob(dmlJobId) {
 async function dmlJobStatus(dmlJobId) {
     const uri = `${instanceUrl}jobs/ingest/${dmlJobId}`;
     let jobStatus = await fetchRequest(uri, '', 'GET');
-    console.log(`DML Job (${dmlJobId}) Status is ${jobStatus.state}`);
+    process.stdout.write(`\rDML Job (${dmlJobId}) with status is ${jobStatus.state}        `);
     const jobStates = ['JobComplete', 'Aborted', 'Failed'];
     if (jobStatus && jobStatus.state && !jobStates.includes(jobStatus.state)) {
         dmlJobStatus(dmlJobId);
@@ -69,14 +69,38 @@ async function getDmlResult(dmlJobId) {
     const unprocessedUri = `${instanceUrl}jobs/ingest/${dmlJobId}/unprocessedrecords`;
     const unprocesseddata = await fetchRequest(unprocessedUri, { 'Accept': 'test/csv' }, 'GET', 'TEXT');
     const unprocessedResultsFilePath = `${rootPath}${globalOptions.objectName}-unprocessedResults.csv`;
-    console.log(`Please check the result under ${rootPath} folder.`);
+    console.log(`\nPlease check the result under ${rootPath} folder.`);
     fs.writeFileSync(successfulResultsFilePath, successfuldata);
     fs.writeFileSync(failedResultsFilePath, faileddata);
     fs.writeFileSync(unprocessedResultsFilePath, unprocesseddata);
 }
-
+function createDeletionFile(csvFile) {
+    let headers = [];
+    const csvFileArray = csvFile.split("\n");
+    let deletionData = '"Id"\n';
+    if (csvFileArray[0].split(",").length === 1 && csvFileArray[0].toLowerCase().split(",")[0].replace(/\r/g, '').replace(/"/g, '') === 'id') {
+        return;
+    } else {
+        let idIndex;
+        csvFileArray.forEach((row, rowIndex) => {
+            row = row.replace(/\r/g, '').replace(/"/g, '');
+            if (rowIndex === 0) {
+                headers = row.toLowerCase().split(",");
+                idIndex = headers.indexOf('id');
+            } else if (rowIndex > 0 && row) {
+                deletionData += '"'+row.split(",")[idIndex]+'"\n';
+            }
+        });
+        fs.writeFileSync(`${rootPath}${globalOptions.objectName}-IdOnly-delete.csv`, deletionData);
+        globalOptions.file = `${rootPath}${globalOptions.objectName}-IdOnly-delete.csv`;
+        globalOptions.lineEnding = 'LF';
+    }
+}
 function dmlJob() {
     instanceUrl = globalOptions.bulkApiBaseUrl;
+    if (globalOptions.operation === 'delete' || globalOptions.operation === 'harddelete') {
+        createDeletionFile(fs.readFileSync(globalOptions.file, "utf8"));
+    }
     createDMLJob(globalOptions.objectName, globalOptions.operation, globalOptions.file, globalOptions.lineEnding);
 }
 export { dmlJob };
