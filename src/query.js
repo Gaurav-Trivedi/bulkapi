@@ -29,7 +29,7 @@ async function getQueryJobStatus(queryJobId, fileName) {
         fs.mkdirSync(rootPath, { recursive: true });
     }
     let jobStatus = await fetchRequest(uri, '', 'GET', 'JSON');
-    process.stdout.write(`\rQuery job (${queryJobId}) with status for ${fileName} is ${jobStatus.state}`);
+    process.stdout.write(`\rQuery job (${queryJobId}) with status for ${fileName} is ${jobStatus.state}        `);
     const jobStates = ['JobComplete', 'Aborted', 'Failed'];
     if (jobStatus && jobStatus.state && !jobStates.includes(jobStatus.state)) {
         getQueryJobStatus(queryJobId, fileName);
