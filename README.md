@@ -1,11 +1,15 @@
-## Salesforce Bulk API 2.0 
+## Salesforce Bulk API 2.0
+
 This is a small utility to get the data from Salesforce and also used to perform DML operations using Bulk API 2.0
 
 ### Install
+
 ```
 npm install -g sfdx-bulkapi
 ```
+
 ### Usage
+
 ```
 sfdx-bulkapi -q "SELECT Id, LastName, CustomField__c FROM Contact"
 OR
@@ -13,6 +17,7 @@ sfdx-bulkapi -q "SELECT * FROM Contact"
 ```
 
 ### Options
+
 ```
   -V, --version              output the version number
   -p, --production           production
@@ -31,6 +36,7 @@ sfdx-bulkapi -q "SELECT * FROM Contact"
 ```
 
 ### Examples
+
 ```
   To get help:
     $ sfdx-bulkapi --help
@@ -47,4 +53,9 @@ sfdx-bulkapi -q "SELECT * FROM Contact"
 
   DML operation in sandbox, id field is required in csv file:
     $ sfdx-bulkapi -o update -f data/contact.csv -so Account
+
+  Delete records with soql
+    $ sfdx-bulkapi -q "SELECT Id, FirstName, LastName FROM Contact" -o delete
+        OR
+    $ sfdx-bulkapi -q "SELECT Id, FirstName, LastName FROM Contact" -o hardDelete
 ```
