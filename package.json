@@ -1,6 +1,6 @@
 {
   "name": "sfdx-bulkapi",
-  "version": "2.0.2",
+  "version": "4.0.1",
   "description": "Bulk API 2.0",
   "main": "./src/bulkapi.js",
   "type": "module",

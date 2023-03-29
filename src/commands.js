@@ -5,7 +5,7 @@ const program = new Command();
 program
     .name('sfdx-bulkapi')
     .description('Connect to SFDC and perform Bulk API operations')
-    .version('2.0.2')
+    .version('4.0.1')
     .usage('-q "SELECT Id, LastName, CustomField__c FROM Contact"')
     .option('-p, --production', 'production')
     .option('-u, --user-name <value>', 'salesforce instance user name or alias, if already defined, the Salesforce instance')
@@ -37,6 +37,11 @@ program.on('--help', function () {
 
   DML operation in sandbox, id field is required in csv file:
     $ sfdx-bulkapi -o update -f data/contact.csv -so Account
+  
+  Delete records with soql
+    $ sfdx-bulkapi -q "SELECT Id, FirstName, LastName FROM Contact" -o delete
+        OR
+    $ sfdx-bulkapi -q "SELECT Id, FirstName, LastName FROM Contact" -o hardDelete
 `);
 });
 
@@ -45,13 +50,15 @@ const options = program.opts();
 
 function validateOptions() {
     const operations = ['update', 'insert', 'upsert', 'delete', 'harddelete', 'query'];
-    if(options.soql){
+    if (options.soql && options.operation && ['delete', 'harddelete'].includes(options.operation.toLowerCase())) {
+        options.delete = true;
+    } else if (options.soql) {
         options.operation = 'query';
-    } else if (!options.operation) { 
+    } else if (!options.operation) {
         console.log(`Please define operation, for more help use\n\t$ sfdx-bulkapi -h`);
         process.exit();
     }
-    if (operations.includes(options.operation.toLowerCase())) {
+    if (operations.includes(options.operation.toLowerCase()) && !options.delete) {
         options.operation = options.operation.toLowerCase();
         if (options.operation !== 'query' && !options.file) {
             console.log(`The file path is required. Use\n\t$ sfdx-bulkapi -o ${options.operation} -f /data/contact.csv -so Account `);
@@ -63,11 +70,11 @@ function validateOptions() {
             console.log(`SOQL attribute is required. Use\n\t$ sfdx-bulkapi -o ${options.operation} -q "SELECT Id, Name FROM Account"`);
             process.exit();
         }
-    } else {
+    } else if (!options.delete) {
         console.log(`Please use proper operation flag, for more information use\n $ sfdx-bulkapi -h`);
         process.exit();
     }
-    if (options.soql && options.operation === 'query' && !options.objectName) {
+    if (options.delete || (options.soql && options.operation === 'query' && !options.objectName)) {
         removeSubQuery(options.soql);
         const soql = tempQuery.split(' ');
         soql.forEach((c, i) => {

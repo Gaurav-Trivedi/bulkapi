@@ -3,6 +3,7 @@
 import fs from 'fs';
 import { fetchRequest } from './fetchRequest.js';
 import { globalOptions } from './bulkapi.js';
+import { dmlJob } from './dml.js';
 let instanceUrl = '', rootPath = '';
 async function createQueryJob(query, fileName) {
     let queryRequest = JSON.stringify({
@@ -44,8 +45,11 @@ async function getQueryResult(queryJobId, fileName) {
     const filePath = `${rootPath}${fileName}.csv`;
     fs.writeFileSync(filePath, queryResult);
     console.log('\nProcess completed');
+    if (globalOptions.delete) {
+        globalOptions.file = filePath;
+        dmlJob();
+    }
 }
-
 
 async function getAllFields() {
     const uri = `${globalOptions.bulkApiBaseUrl}sobjects/${globalOptions.objectName}/describe`;

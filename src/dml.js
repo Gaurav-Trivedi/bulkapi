@@ -9,7 +9,7 @@ async function createDMLJob(object, operation, filePath, lineEnding = 'CRLF') {
     let dmlJobBody = JSON.stringify({
         "operation": operation,
         "object": object,
-        "lineEnding" : lineEnding
+        "lineEnding": lineEnding
     });
     const uri = instanceUrl + 'jobs/ingest';
     const createJobResponse = await fetchRequest(uri, '', 'POST', 'JSON', dmlJobBody);
@@ -73,6 +73,9 @@ async function getDmlResult(dmlJobId) {
     fs.writeFileSync(successfulResultsFilePath, successfuldata);
     fs.writeFileSync(failedResultsFilePath, faileddata);
     fs.writeFileSync(unprocessedResultsFilePath, unprocesseddata);
+    if (globalOptions.delete || globalOptions.operation === 'delete' || globalOptions.operation === 'harddelete') {
+        fs.unlinkSync(globalOptions.file);
+    }
 }
 function createDeletionFile(csvFile) {
     let headers = [];
@@ -88,7 +91,7 @@ function createDeletionFile(csvFile) {
                 headers = row.toLowerCase().split(",");
                 idIndex = headers.indexOf('id');
             } else if (rowIndex > 0 && row) {
-                deletionData += '"'+row.split(",")[idIndex]+'"\n';
+                deletionData += '"' + row.split(",")[idIndex] + '"\n';
             }
         });
         fs.writeFileSync(`${rootPath}${globalOptions.objectName}-IdOnly-delete.csv`, deletionData);
